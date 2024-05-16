@@ -75,6 +75,7 @@ class _MyPageState extends State<MyPage> {
                               item['body'],
                               style: const TextStyle(
                                   color: Colors.black,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w500),
                             ),
                           ],
