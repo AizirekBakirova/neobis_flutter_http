@@ -14,4 +14,6 @@ class Post {
   final int id;
   final String title;
   final String body;
+
+  factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../models/post.dart';
+import '../widgets/post_card.dart';
+
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
 
@@ -10,22 +13,18 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  Future<List<dynamic>> fetchPost() async {
+  Future<List<Post>> _fetchPost() async {
     final response =
         await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final List<dynamic> body = jsonDecode(response.body);
+      final result = body.map((json) => Post.fromJson(json)).toList();
+
+      return result;
     } else {
       throw Exception('Failed to load data');
     }
-  }
-
-  late Future<List<dynamic>> futureData;
-  @override
-  void initState() {
-    super.initState();
-    futureData = fetchPost();
   }
 
   @override
@@ -34,7 +33,7 @@ class _MyPageState extends State<MyPage> {
       child: Scaffold(
         body: Center(
           child: FutureBuilder(
-            future: futureData,
+            future: _fetchPost(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -45,47 +44,7 @@ class _MyPageState extends State<MyPage> {
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, index) {
                     final item = snapshot.data![index];
-                    return Card(
-                      color: Colors.blueGrey,
-                      child: ListTile(
-                        title: Text(
-                          item['title'],
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'ID: ${item['id']}',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              'User Id: ${item['userId']}',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              item['body'],
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                    return PostCard(item: item);
                   },
                 );
               }
