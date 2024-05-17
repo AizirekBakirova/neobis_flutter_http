@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neobis_flutter_http/my_page.dart';
+import 'package:neobis_flutter_http/pages/my_page.dart';
 
 void main() {
   runApp(const MyApp());
